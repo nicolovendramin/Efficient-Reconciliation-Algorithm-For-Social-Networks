@@ -21,9 +21,9 @@ social_two = graph.copy()
 for e in graph.edges_iter():
     keep_one = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
     keep_two = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
-    if keep_one < s_one:
+    if keep_one > s_one:
         social_one.remove_edge(e[0], e[1])
-    if keep_two < s_two:
+    if keep_two > s_two:
         social_two.remove_edge(e[0], e[1])
 
 plt.figure(2)
