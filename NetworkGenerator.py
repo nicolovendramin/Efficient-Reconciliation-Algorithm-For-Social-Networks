@@ -37,10 +37,10 @@ for e in graph.edges_iter():
 
 # plotting instructions
 plt.figure(2)
-nx.draw_networkx(social_one, node_size = [math.pow(graph.degree(v),2) for v in graph], node_color = 'b')
+nx.draw_networkx(social_one, node_size = [math.pow(social_one.degree(v),2) for v in social_one], node_color = 'b')
 
 plt.figure(3)
-nx.draw_networkx(social_two, node_size = [math.pow(graph.degree(v),2) for v in graph], node_color = 'g')
+nx.draw_networkx(social_two, node_size = [math.pow(social_two.degree(v),2) for v in social_two], node_color = 'g')
 
 # counting the total degree to assess the increased sparsity of the derived networks, selection of the trusted link set
 nodes_real = graph.nodes()
