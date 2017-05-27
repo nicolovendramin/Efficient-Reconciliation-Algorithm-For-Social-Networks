@@ -17,7 +17,7 @@ m = 4
 graph = nx.barabasi_albert_graph(n, m)
 
 # Plotting instructions for the graph
-pos = nx.nx.spring_layout(graph,iterations=20)
+# pos = nx.nx.spring_layout(graph,iterations=20)
 plt.figure(1)
 nx.draw_networkx(graph, node_size = [math.pow(graph.degree(v),2) for v in graph])
 labels = {i: i + 1 for i in graph.nodes()}
