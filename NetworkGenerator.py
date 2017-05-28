@@ -10,9 +10,9 @@ s_one = 0.1
 # probability to keep an edge in the second social
 s_two = 0.3
 # number of edges of our network
-n = 150
+n = 5000
 # m parameter for the Preferential Attachment method
-m = 4
+m = 40
 # Graph variable representing the real underlying network
 graph = nx.barabasi_albert_graph(n, m)
 
