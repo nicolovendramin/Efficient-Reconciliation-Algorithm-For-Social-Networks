@@ -1,12 +1,14 @@
 IMPLEMENTATION OF THE PAPER : An efficient reconciliation algorithm for social networks
 by Nitish Korula and Silvio Lattanzi.
 
-The project is realized by Joan Ficapal Vila and NicolÃ² Vendramin in the context of the course "Advanced Algorithms
+The project is realized by Joan Ficapal Vila and Nicolò Vendramin in the context of the course "Advanced Algorithms
 and Parallel Programming" (A.A. 2016/2017), under the supervision of Prof. Ferrandi and Prof Lattuada.
 
 The folder named "code" contains the implementation.
+
 The folder named "documentation" contains a set of slide decks that are made to explain in detail the project and to
 document the development.
+
 The folder named "informative_materials" contains other materials from which we have extracted some informations in
 addition to a copy of the above mentioned paper explaining the algorithm.
 
