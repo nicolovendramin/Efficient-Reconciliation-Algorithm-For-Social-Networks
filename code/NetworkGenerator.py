@@ -1,6 +1,3 @@
-
-
-
 import matplotlib.pyplot as plt
 import networkx as nx
 import math
@@ -21,6 +18,10 @@ class NetworkGenerator(object):
     graph = []
     social_one = []
     social_two = []
+    identified_connections = []
+    d_graph = 0
+    d_one = 0
+    d_two = 0
     tot_degree_real = 0
     tot_degree_one = 0
     tot_degree_two = 0
@@ -84,19 +85,31 @@ class NetworkGenerator(object):
         for i in nodes_real:
             if i not in nodes_one or i not in nodes_two:
                 print("Graph reduction error")
-            self.tot_degree_one += self.social_one.degree(i)
-            self.tot_degree_real += self.graph.degree(i)
-            self.tot_degree_two += self.social_two.degree(i)
+            d_one_i = self.social_one.degree(i)
+            d_two_i = self.social_two.degree(i)
+            d_graph_i = self.graph.degree(i)
+            self.tot_degree_one += d_one_i
+            self.tot_degree_real += d_graph_i
+            self.tot_degree_two += d_two_i
+            self.d_graph = max(d_graph_i, self.d_graph)
+            self.d_one = max(d_one_i, self.d_one)
+            self.d_two = max(d_two_i, self.d_two)
             link_known = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
             if link_known < self.l:
-                identified_connections.append(i)
+                identified_connections.append((i, i))
 
         # Printing and plotting
         print(self.tot_degree_real, self.tot_degree_one, self.tot_degree_two)
-        print(identified_connections)
+        self.identified_connections = identified_connections
 
-    def get_networks(self):
-        return self.graph, self.social_one, self.social_two
+    def get_network(self):
+        return self.graph
+
+    def get_realizations(self):
+        return self.social_one, self.social_two, self.identified_connections
+
+    def get_maxdegree(self):
+        return max(self.d_one, self.d_two)
 
 def GetGenerator():
     return NetworkGenerator()
