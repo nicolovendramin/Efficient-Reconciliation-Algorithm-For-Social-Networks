@@ -14,9 +14,10 @@ class Reconciliator():
         L_beggining=L.copy()
 
         v_id_to_vertex = pd.Series(data=np.arange(len(g2)), index=g2)
-        u_id_to_vertex = pd.Series(data=np.arange(len(g1)), index=g2)
+        u_id_to_vertex = pd.Series(data=np.arange(len(g1)), index=g1)
 
         for i in range(0, k):
+            print("<---------New Iteration------------>")
             for j in range(math.floor(math.log(D,2)), 1, -1):
                 # We use that dtype in order to make the matrix fit in the memory
                 score_matrix=np.zeros((len(g1.nodes()),len(g2.nodes())), dtype=np.uint16)
@@ -29,8 +30,6 @@ class Reconciliator():
                 g1_nodes = g1#[u for u in list(set(g1.nodes())-set(identified_one))]
                 g2_nodes = g2#[u for u in list(set(g2.nodes())-set(identified_two))]
 
-                print(g1.neighbors(1))
-
                 d_thresh = math.pow(2, j)
 
                 m=compute_scores(g1_nodes, g2_nodes,L,score_matrix,d_thresh)
@@ -42,7 +41,10 @@ class Reconciliator():
                     a=largest_positions_u[largest_positions_v[iteration]]
                     if a==iteration:
                         L.append((u_id_to_vertex[a], v_id_to_vertex[iteration]))
-        print(L)
+
+                print("Step :",math.floor(math.log(D,2))-j+1," / ",math.floor(math.log(D,2)),"(D) of ", i," / ",k," (k)")
+        print("<---------------------------------->")
+        #print(L)
         print("L length beggining: ",len_begining)
         print("L length end: ",len(set(L)))
         print("New ones: ",set(L)-set(L_beggining))

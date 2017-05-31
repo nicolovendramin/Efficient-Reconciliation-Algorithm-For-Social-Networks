@@ -99,7 +99,7 @@ class NetworkGenerator(object):
                 identified_connections.append((i, i))
 
         # Printing and plotting
-        print(self.tot_degree_real, self.tot_degree_one, self.tot_degree_two)
+        print("\nDegree Background graph: ",self.tot_degree_real,"\nDegree 1st graph: ",self.tot_degree_one,"\nDegree 2nd graph", self.tot_degree_two,"\n")
         self.identified_connections = identified_connections
 
     def get_network(self):
