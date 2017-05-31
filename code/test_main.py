@@ -1,6 +1,6 @@
 import networkx as nx
 import NetworkGenerator as ng
-import ReconciliationAlgo as ra
+import ReconciliationAlgo_Joanstyle as ra
 
 
 generator = ng.GetGenerator()
@@ -11,5 +11,5 @@ l = len(L)
 r = ra.get_reconciliator()
 L = r.reconcile_naive(g1, g2, L, 2, D, 2)
 
-print(len(L), l)
+#print(len(L), l)
 
