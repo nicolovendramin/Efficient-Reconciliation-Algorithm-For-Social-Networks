@@ -1,4 +1,4 @@
-import math as m
+import math as math
 import networkx as nx
 import pandas as pd
 import numpy as np
@@ -10,48 +10,55 @@ class Reconciliator():
     bests_two = {}
 
     def reconcile_naive(self, g1, g2, L, k, D, T):
+        len_begining=len(L)
+        L_beggining=L.copy()
 
-        L_id_to_vertex = pd.Series(data=np.arange(len(L)), index=L)
+        v_id_to_vertex = pd.Series(data=np.arange(len(g2)), index=g2)
+        u_id_to_vertex = pd.Series(data=np.arange(len(g1)), index=g2)
 
-        local = []
         for i in range(0, k):
-            for j in range(m.floor(m.log(D,2)), 1, -1):
+            for j in range(math.floor(math.log(D,2)), 1, -1):
                 # We use that dtype in order to make the matrix fit in the memory
-                score_matrix=np.zeros((len(g1.nodes),len(g2.nodes)), dtype=np.uint16)
+                score_matrix=np.zeros((len(g1.nodes()),len(g2.nodes())), dtype=np.uint16)
 
-                print(i, j)
+                #print(i, j)
 
                 identified_one = [l[0] for l in L]
                 identified_two = [l[1] for l in L]
 
-                g1_nodes = [u for u in list(set(g1.nodes())-set(identified_one))]
-                g2_nodes = [u for u in list(set(g2.nodes())-set(identified_two))]
+                g1_nodes = g1#[u for u in list(set(g1.nodes())-set(identified_one))]
+                g2_nodes = g2#[u for u in list(set(g2.nodes())-set(identified_two))]
 
-                d_thresh = m.pow(2, j)
+                print(g1.neighbors(1))
 
-                m=compute_scores(L,g1_nodes, g2_nodes,L,m,d_thresh)
+                d_thresh = math.pow(2, j)
 
-                for row in m:
-                    some_function(column)
-                for u in self.bests_one.keys():
-                    b = self.bests_one[u]
-                    flag = True
-                    if len(b[1]) == 1:
-                        try:
-                            a = self.bests_two[v]
-                        except:
-                            flag = False
-                        if flag and len(a[1]) == 1 and a[1][0] == b[1][0]:
-                            local.append((u, v))
-        return local
+                m=compute_scores(g1_nodes, g2_nodes,L,score_matrix,d_thresh)
 
-def compute_scores(g1, g2,L,m,d_thresh):
-    for l in L.values:
+                largest_positions_v=m.argmax(0)
+                largest_positions_u=m.argmax(1)
+
+                for iteration in range(1,len(largest_positions_v)):
+                    a=largest_positions_u[largest_positions_v[iteration]]
+                    if a==iteration:
+                        L.append((u_id_to_vertex[a], v_id_to_vertex[iteration]))
+        print(L)
+        print("L length beggining: ",len_begining)
+        print("L length end: ",len(set(L)))
+        print("New ones: ",set(L)-set(L_beggining))
+
+        return L
+
+def compute_scores(g1, g2,L,score_matrix,d_thresh):
+    #self.graph = nx.barabasi_albert_graph(size(g1))
+    #self.graph = nx.barabasi_albert_graph(self.n, self.m)
+
+    for l in L:
         for v in g1.neighbors(l[0]):
             for u in g2.neighbors(l[1]):
                 if g1.degree(u) > d_thresh and g2.degree(v) > d_thresh:
-                    m[u,v]+=1
-    return m
+                    score_matrix[u,v]+=1
+    return score_matrix
 
 
 def get_reconciliator():
