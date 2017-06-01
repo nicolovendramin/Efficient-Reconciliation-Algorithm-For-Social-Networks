@@ -36,7 +36,7 @@ class Reconciliator:
     # and 3 integer values.
     # This implementation is based on the one suggested by the paper, but has been made more efficient,
     # lowering the complexity from k*log(D)*n^3  to k*log(D)*n*D^2
-    def reconcile_naive(self, g1, g2, L, k, D, T):
+    def reconcile_naive(self, g1, g2, L, k, D, T, verbose=False):
         # We store the number of trusted links at the beginning and a copy of that set in order to be able
         # to evaluate the obtained performances
         len_beginning = len(L)
@@ -47,6 +47,8 @@ class Reconciliator:
 
         # iterate on k to repeat the procedure k times
         for i in range(0, k):
+            if verbose:
+                print("<---------New Iteration------------>")
             # iterating from log(D) to 2 in order to have a descending filter on the minimum degree required for
             # node matching
             for j in range(math.floor(math.log(D, 2)), 1, -1):
@@ -63,27 +65,32 @@ class Reconciliator:
                 # We call the function to compute the scores
                 m = self.compute_scores(g1, g2, L, score_matrix, d_thresh)
 
-                # With the argmax function we compute the position of the maximum score for each column
+                # With the math.argmax function we compute the position of the maximum score for each column
                 # and for each row
                 largest_positions_v = m.argmax(0)
                 largest_positions_u = m.argmax(1)
 
                 # We will add to the trusted links only those couples in which max_position[u] = position[v]
-                # and max_position[v] = u
-                for iteration in range(1, len(largest_positions_v)):
+                # and max_position[v] = position[u]
+                for iteration in range(0, len(largest_positions_v)):
                     a = largest_positions_u[largest_positions_v[iteration]]
                     # we check that the best for the row corresponding to the best for the column is the same
                     # number (basically checking a symmetry in the max for that column and row)
                     if a == iteration and score_matrix[iteration, largest_positions_v[iteration]] > T:
                         L.append((u_id_to_vertex[a], v_id_to_vertex[iteration]))
 
+                if verbose:
+                    print("Step :", math.floor(math.log(D, 2)) - j + 1, " / ", math.floor(math.log(D, 2)), "(D) of ", i,
+                          " / ", k, " (k)")
+
         # some printing to visually check the results
         new_l = set(L)-set(l_beginning)
-        print(L)
-        print(len(L))
-        print("L length beggining: ", len_beginning)
-        print("L length end: ", len(set(L)))
-        print("New ones: ", new_l)
+
+        if verbose:
+            print("<---------------------------------->")
+            print("L length beginning: ", len_beginning)
+            print("L length end: ", len(set(L)))
+            print("New ones: ", new_l)
 
         return L, new_l
 
