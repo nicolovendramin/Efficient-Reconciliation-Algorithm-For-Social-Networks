@@ -1,20 +1,35 @@
+"""""
+This file is part of "Implementation of an Efficient Reconciliation Algorithm for Social Network".
+
+"Implementation of an Efficient Reconciliation Algorithm for Social Network"
+is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+"Implementation of an Efficient Reconciliation Algorithm for Social Network"
+is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+If you are willing to know more about the above mentioned license
+see <http://www.gnu.org/licenses/>.
+
+For what the algorithmic part is concerned we base the implementation on
+the paper http://www.vldb.org/pvldb/vol7/p377-korula.pdf (also available
+in the informative_materials folder of the repo.
+"""
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import math
 import os
 
+
 class NetworkGenerator(object):
-    # probability that a generic node belongs to the group of the trusted identified connections
-    l = 0.01
-    # probability to keep an edge in the first social
-    s_one = 0.1
-    # probability to keep an edge in the second social
-    s_two = 0.3
-    # number of edges of our network
-    n = 65000
-    # m parameter for the Preferential Attachment method
-    m = 40
     # Graph variable representing the real underlying network
+    n = 0
     graph = []
     social_one = []
     social_two = []
@@ -54,14 +69,10 @@ class NetworkGenerator(object):
             print("Plotting aborted")
 
     # generates the Real network and the two realizations
-    def generate(self, n, m, l, s_one, s_two):
+    def generate(self, n, m, l, s_one, s_two, verbosity=False):
         self.n = n
-        self.m = m
-        self.l = l
-        self.s_one = s_one
-        self.s_two = s_two
         # initialization of the three networks
-        self.graph = nx.barabasi_albert_graph(self.n, self.m)
+        self.graph = nx.barabasi_albert_graph(n, m)
         self.social_one = self.graph.copy()
         self.social_two = self.graph.copy()
 
@@ -69,9 +80,9 @@ class NetworkGenerator(object):
         for e in self.graph.edges_iter():
             keep_one = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
             keep_two = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
-            if keep_one > self.s_one:
+            if keep_one > s_one:
                 self.social_one.remove_edge(e[0], e[1])
-            if keep_two > self.s_two:
+            if keep_two > s_two:
                 self.social_two.remove_edge(e[0], e[1])
 
         # counting the total degree to assess the increased sparsity of the derived networks, selection of
@@ -95,11 +106,14 @@ class NetworkGenerator(object):
             self.d_one = max(d_one_i, self.d_one)
             self.d_two = max(d_two_i, self.d_two)
             link_known = int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1)
-            if link_known < self.l:
+            if link_known < l:
                 identified_connections.append((i, i))
 
         # Printing and plotting
-        print("\nDegree Background graph: ",self.tot_degree_real,"\nDegree 1st graph: ",self.tot_degree_one,"\nDegree 2nd graph", self.tot_degree_two,"\n")
+        if verbosity:
+            print("\nDegree Background graph: ", self.tot_degree_real,
+                  "\nDegree 1st graph: ", self.tot_degree_one, "\nDegree 2nd graph", self.tot_degree_two, "\n")
+
         self.identified_connections = identified_connections
 
     def get_network(self):
@@ -108,9 +122,9 @@ class NetworkGenerator(object):
     def get_realizations(self):
         return self.social_one, self.social_two, self.identified_connections
 
-    def get_maxdegree(self):
+    def get_max_degree(self):
         return max(self.d_one, self.d_two)
 
-def GetGenerator():
-    return NetworkGenerator()
 
+def get_generator():
+    return NetworkGenerator()
